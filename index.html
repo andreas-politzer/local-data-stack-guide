@@ -778,6 +778,87 @@ ORDER BY Avg_Product_Price DESC;</div>
         </div>
     </div>
 
+    <!-- INSTRUCTOR SUGGESTIONS -->
+<h2 class="section-title">6. Further Analysis Ideas</h2>
+<p style="color:var(--muted); margin-bottom:28px;">Suggested by Kelvin as natural extensions once the 5 core KPIs are in place.</p>
+
+<div class="kpi-card ops">
+    <div class="kpi-top">
+        <div>
+            <div class="kpi-number">+1</div>
+            <div class="kpi-name">Low-Volume, High-Margin Products (Promotion Candidates)</div>
+        </div>
+        <span class="kpi-tag tag-ops">Product Strategy</span>
+    </div>
+    <div class="kpi-section">
+        <span class="kpi-label">What it answers</span>
+        <p class="kpi-text">Which products sell poorly but generate a high profit per unit? These are the best candidates for a targeted promotion — pushing a product that already earns well per sale but just needs more visibility is smarter than promoting a bestseller that sells itself anyway.</p>
+    </div>
+    <div class="kpi-section">
+        <span class="kpi-label">How to calculate it</span>
+        <div class="formula">Margin per unit = Unit price − Unit cost &nbsp;|&nbsp; then filter for low quantity sold + high margin</div>
+    </div>
+    <div class="kpi-section">
+        <span class="kpi-label">SQL query in BigQuery</span>
+        <div class="sql">SELECT
+    p.Product,
+    p.Product_line,
+    (p.Unit_price - p.Unit_cost) AS Margin_per_Unit,
+    SUM(s.Quantity) AS Total_Units_Sold
+FROM daily_sales AS s
+JOIN products AS p ON s.Product_number = p.Product_number
+GROUP BY p.Product, p.Product_line, p.Unit_price, p.Unit_cost
+ORDER BY Total_Units_Sold ASC, Margin_per_Unit DESC
+LIMIT 20;</div>
+    </div>
+</div>
+
+<div class="kpi-card ops">
+    <div class="kpi-top">
+        <div>
+            <div class="kpi-number">+2</div>
+            <div class="kpi-name">Revenue Growth Over Time</div>
+        </div>
+        <span class="kpi-tag tag-ops">Trend Analysis</span>
+    </div>
+    <div class="kpi-section">
+        <span class="kpi-label">What it answers</span>
+        <p class="kpi-text">Is GoExplore actually growing? We have data from January 2015 to July 2018 — enough to see year-on-year trends and seasonal patterns. This tells Sabah whether the business is accelerating, plateauing, or dipping at certain times of year.</p>
+    </div>
+    <div class="kpi-section">
+        <span class="kpi-label">How to calculate it</span>
+        <div class="formula">Monthly revenue = SUM(Quantity × Unit sale price) grouped by Year and Month</div>
+    </div>
+    <div class="kpi-section">
+        <span class="kpi-label">SQL query in BigQuery</span>
+        <div class="sql">SELECT
+    EXTRACT(YEAR FROM s.Date) AS Year,
+    EXTRACT(MONTH FROM s.Date) AS Month,
+    SUM(s.Quantity * s.Unit_sale_price) AS Monthly_Revenue
+FROM daily_sales AS s
+GROUP BY Year, Month
+ORDER BY Year, Month;</div>
+    </div>
+</div>
+
+<div class="kpi-card ops">
+    <div class="kpi-top">
+        <div>
+            <div class="kpi-number">+3</div>
+            <div class="kpi-name">Geographic Map in the Dashboard</div>
+        </div>
+        <span class="kpi-tag tag-ops">Visualisation</span>
+    </div>
+    <div class="kpi-section">
+        <span class="kpi-label">What it answers</span>
+        <p class="kpi-text">A world map in Data Studio that colours each country by revenue — darker means more revenue. This makes the expansion story immediately visible: Sabah can see at a glance which regions are strong and where the 4 new target countries sit relative to existing markets.</p>
+    </div>
+    <div class="kpi-section">
+        <span class="kpi-label">How to build it in Data Studio</span>
+        <p class="kpi-text">Add a new chart → select <strong style="color:var(--green)">Geo Chart</strong> → set <code>Country</code> as the dimension and <code>Total Revenue</code> as the metric. Data Studio draws the map automatically. No SQL needed at this step.</p>
+    </div>
+</div>
+
     <!-- SECTION 4: COMPARISON MARKETS -->
     <h2 class="section-title">4. How We'll Estimate the New Markets</h2>
     <p style="color:var(--muted); margin-bottom:20px;">We can't know exactly how much GoExplore will earn in Norway or Poland — they've never operated there. But we can make a data-driven estimate using countries we already know. The logic is simple: if Sweden earns X per person, and Norway has a similar population and GDP, then Norway should earn roughly the same per person.</p>
